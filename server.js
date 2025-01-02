@@ -96,7 +96,7 @@ const Property = mongoose.model('Property', PropertySchema);
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'alaeldindev@gmail.com ', // استبدل ببريدك الإلكتروني
+    user: 'alaeldindev@gmail.com', // استبدل ببريدك الإلكتروني
     pass: 'ENG:aladin@88', // استبدل بكلمة مرور البريد الإلكتروني
   },
 });
@@ -104,7 +104,7 @@ const transporter = nodemailer.createTransport({
 // وظيفة إرسال OTP عبر Gmail
 const sendOTPEmail = async (email, otp) => {
   const mailOptions = {
-    from: 'alaeldindev@gmail.com ', // البريد الإلكتروني الخاص بك
+    from: 'alaeldindev@gmail.com', // البريد الإلكتروني الخاص بك
     to: email,
     subject: 'Your OTP Code',
     text: `Your OTP code is: ${otp}`,
