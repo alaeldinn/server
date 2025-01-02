@@ -139,6 +139,7 @@ app.post('/register', upload.single('profileImage'), async (req, res) => {
       return res.status(409).json({
         status: 'error',
         message: 'Please provide all the necessary details.',
+        missingFields: missingFields, // إضافة الحقول المفقودة
       });
     }
 
