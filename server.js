@@ -88,6 +88,8 @@ const PropertySchema = new mongoose.Schema({
     lng: { type: Number, required: true },
   },
   imageUrls: [{ type: String }],
+  price: { type: Number, required: true }, // إضافة السعر
+  pricePeriod: { type: String, enum: ['day', 'month', 'semester'], required: true }, // إضافة الفترة الزمنية
 }, { timestamps: true });
 
 const Property = mongoose.model('Property', PropertySchema);
@@ -427,6 +429,8 @@ app.post('/addProperty', async (req, res) => {
       psychologicalSupport,
       location,
       imageUrls,
+      price,
+      pricePeriod,
     } = req.body;
 
     // التحقق من وجود روابط الصور (imageUrls)
@@ -462,6 +466,8 @@ app.post('/addProperty', async (req, res) => {
         lng: location.lng,
       },
       imageUrls: imageUrls,
+      price, // إضافة السعر
+      pricePeriod, // إضافة الفترة الزمنية
     });
 
     // حفظ العقار في قاعدة البيانات
@@ -485,7 +491,8 @@ app.get('/getAllProperties', async (req, res) => {
     const formattedProperties = properties.map(property => ({
       _id: property._id,
       type: property.hostelName, // يمكن تعديل هذا الحقل حسب احتياجاتك
-      price: property.price || 'N/A', // إذا كان السعر غير موجود، يتم تعيينه إلى 'N/A'
+      price: property.price || 'N/A', // إرجاع السعر
+      pricePeriod: property.pricePeriod || 'N/A', // إرجاع الفترة الزمنية
       size: property.size || 'N/A', // إذا كان الحجم غير موجود، يتم تعيينه إلى 'N/A'
       rooms: property.rooms || 0, // إذا كان عدد الغرف غير موجود، يتم تعيينه إلى 0
       imageUrls: property.imageUrls || [], // استخدام أول صورة كصورة رئيسية
@@ -510,8 +517,10 @@ app.get('/getAllProperties', async (req, res) => {
       effectiveManagement: property.effectiveManagement,
       psychologicalSupport: property.psychologicalSupport,
     }));
-      // استخدام JSON.stringify لطباعة البيانات بشكل مفصل
+
+    // استخدام JSON.stringify لطباعة البيانات بشكل مفصل
     console.log('Response Data:', JSON.stringify({ properties: formattedProperties }, null, 2));
+
     // إرسال الاستجابة
     res.status(200).json({ properties: formattedProperties });
   } catch (error) {
