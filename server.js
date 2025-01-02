@@ -97,7 +97,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'alaeldindev@gmail.com ', // استبدل ببريدك الإلكتروني
-    pass: 'ENG:network@88200', // استبدل بكلمة مرور البريد الإلكتروني
+    pass: 'ENG:aladin@88', // استبدل بكلمة مرور البريد الإلكتروني
   },
 });
 
