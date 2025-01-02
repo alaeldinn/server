@@ -60,6 +60,16 @@ const otpSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 const OTP = mongoose.model('OTP', otpSchema);
 
+app.post('/getPropertiesInBounds', async (req, res) => {
+  const { northEast, southWest } = req.body;
+
+  const properties = await Property.find({
+    latitude: { $gte: southWest.lat, $lte: northEast.lat },
+    longitude: { $gte: southWest.lng, $lte: northEast.lng },
+  });
+
+  res.json({ properties });
+});
 // تعريف نموذج العقار
 const PropertySchema = new mongoose.Schema({
   email: { type: String, required: true },
