@@ -124,12 +124,16 @@ const sendOTPEmail = async (email, otp) => {
 app.post('/register', upload.single('profileImage'), async (req, res) => {
   try {
     const { firstName, lastName, email, password, accountType, studentId, major, universityName, universityCode, universityAddress, studentCount } = req.body;
-    const missingFields = requiredFields.filter(field => !req.body[field]);
+
     // تحقق من صحة البيانات
-    if (!firstName || !lastName || !email || !password || !accountType) {
+    const requiredFields = ['firstName', 'lastName', 'email', 'password', 'accountType'];
+    const missingFields = requiredFields.filter(field => !req.body[field]);
+
+    if (missingFields.length > 0) {
       return res.status(400).json({
         status: 'error',
-        message: 'All fields are required.',
+        message: 'Please provide all the necessary details.',
+        missingFields: missingFields,
       });
     }
 
@@ -138,8 +142,7 @@ app.post('/register', upload.single('profileImage'), async (req, res) => {
     if (existingUser) {
       return res.status(409).json({
         status: 'error',
-        message: 'Please provide all the necessary details.',
-        missingFields: missingFields, // إضافة الحقول المفقودة
+        message: 'User already exists. Please use a different email.',
       });
     }
 
