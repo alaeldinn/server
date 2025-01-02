@@ -7,12 +7,9 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
 const { Decimal128 } = require('mongodb');
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer'); // إضافة nodemailer
 const app = express();
 const port = 3001;
-
-// إعداد SendGrid
-sgMail.setApiKey('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');
 
 // إعداد CORS للسماح بالتواصل مع تطبيق Flutter
 app.use(cors());
@@ -95,18 +92,27 @@ const PropertySchema = new mongoose.Schema({
 
 const Property = mongoose.model('Property', PropertySchema);
 
-// وظيفة إرسال OTP عبر SendGrid
+// إعداد nodemailer لإرسال البريد عبر Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'alaeldindev@gmail.com ', // استبدل ببريدك الإلكتروني
+    pass: 'ENG:network@88200', // استبدل بكلمة مرور البريد الإلكتروني
+  },
+});
+
+// وظيفة إرسال OTP عبر Gmail
 const sendOTPEmail = async (email, otp) => {
-  const msg = {
+  const mailOptions = {
+    from: 'alaeldindev@gmail.com ', // البريد الإلكتروني الخاص بك
     to: email,
-    from: 'alaeldindev@gmail.com', // البريد الإلكتروني الخاص بك
     subject: 'Your OTP Code',
     text: `Your OTP code is: ${otp}`,
     html: `<strong>Your OTP code is: ${otp}</strong>`,
   };
 
   try {
-    await sgMail.send(msg);
+    await transporter.sendMail(mailOptions);
     console.log('OTP email sent successfully');
   } catch (error) {
     console.error('Error sending OTP email:', error);
