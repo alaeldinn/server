@@ -124,7 +124,7 @@ const sendOTPEmail = async (email, otp) => {
 app.post('/register', upload.single('profileImage'), async (req, res) => {
   try {
     const { firstName, lastName, email, password, accountType, studentId, major, universityName, universityCode, universityAddress, studentCount } = req.body;
-
+    const missingFields = requiredFields.filter(field => !req.body[field]);
     // تحقق من صحة البيانات
     if (!firstName || !lastName || !email || !password || !accountType) {
       return res.status(400).json({
