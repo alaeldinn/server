@@ -12,7 +12,7 @@ const app = express();
 const port = 3001;
 
 // إعداد SendGrid
-sgMail.setApiKey('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');
+sgMail.setApiKey('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');
 
 // إعداد CORS للسماح بالتواصل مع تطبيق Flutter
 app.use(cors());
