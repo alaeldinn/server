@@ -70,6 +70,7 @@ app.post('/getPropertiesInBounds', async (req, res) => {
 
   res.json({ properties });
 });
+
 // تعريف نموذج العقار
 const PropertySchema = new mongoose.Schema({
   email: { type: String, required: true },
@@ -498,12 +499,12 @@ app.get('/getAllProperties', async (req, res) => {
     const properties = await Property.find({});
 
     // تحويل البيانات إلى التنسيق المطلوب
-    const formattedProperties = properties.map(property => ({
+    const formattedProperties = properties.map((property, index) => ({
       _id: property._id,
       type: property.hostelName, // يمكن تعديل هذا الحقل حسب احتياجاتك
       price: property.price || 'N/A', // إرجاع السعر
       pricePeriod: property.pricePeriod || 'N/A', // إرجاع الفترة الزمنية
-      index: index + 1,
+      index: index + 1, // استخدام الفهرس الذي يتم تمريره تلقائيًا في map
       size: property.size || 'N/A', // إذا كان الحجم غير موجود، يتم تعيينه إلى 'N/A'
       rooms: property.rooms || 0, // إذا كان عدد الغرف غير موجود، يتم تعيينه إلى 0
       imageUrls: property.imageUrls || [], // استخدام أول صورة كصورة رئيسية
