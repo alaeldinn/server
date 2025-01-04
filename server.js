@@ -541,6 +541,29 @@ app.get('/getAllProperties', async (req, res) => {
   }
 });
 
+// نقطة النهاية لجلب بيانات مالك العقار
+app.get('/getOwnerDetails/:ownerId', async (req, res) => {
+  try {
+    const { ownerId } = req.params;
+
+    // البحث عن المستخدم باستخدام ownerId
+    const owner = await User.findById(ownerId);
+
+    if (!owner) {
+      return res.status(404).json({ message: 'Owner not found' });
+    }
+
+    // إرجاع بيانات المالك
+    res.status(200).json({
+      firstName: owner.firstName,
+      lastName: owner.lastName,
+      profileImage: owner.profileImage,
+    });
+  } catch (error) {
+    console.error('Error fetching owner details:', error);
+    res.status(500).json({ message: 'Failed to fetch owner details', error: error.message });
+  }
+});
 // **إرسال OTP**
 app.post('/send-otp', async (req, res) => {
   const { email } = req.body;
