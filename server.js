@@ -625,6 +625,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 function toRadians(degree) {
   return degree * (Math.PI / 180);
 }
+
+
+
 // نقطة النهاية لجلب العقارات المشابهة بناءً على الموقع
 app.post('/getSimilarProperties', async (req, res) => {
   try {
@@ -649,8 +652,22 @@ app.post('/getSimilarProperties', async (req, res) => {
       return distance <= 10; // 10 كيلومترات
     });
 
+    // تحويل البيانات إلى التنسيق المطلوب من الواجهة الأمامية
+    const formattedProperties = similarProperties.map((property) => ({
+      ownerId: property.ownerId,
+      type: property.hostelName, // استخدام hostelName كـ type
+      latitude: property.location.lat,
+      longitude: property.location.lng,
+      roomType: property.roomType,
+      bathroomType: property.bathroomType,
+      internetAvailable: property.internetAvailable,
+      imageUrls: property.imageUrls,
+      price: property.price, // إضافة السعر
+      pricePeriod: property.pricePeriod, // إضافة الفترة الزمنية
+    }));
+
     // إرسال العقارات المشابهة كاستجابة
-    res.status(200).json({ properties: similarProperties });
+    res.status(200).json({ properties: formattedProperties });
   } catch (error) {
     console.error('Error fetching similar properties:', error);
     res.status(500).json({ error: 'Failed to fetch similar properties' });
