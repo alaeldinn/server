@@ -605,6 +605,58 @@ app.post('/verify-otp', async (req, res) => {
   }
 });
 
+// دالة لحساب المسافة بين نقطتين باستخدام صيغة Haversine
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const earthRadius = 6371; // نصف قطر الأرض بالكيلومترات
+
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadius * c; // المسافة بالكيلومترات
+}
+
+// دالة لتحويل الدرجات إلى راديان
+function toRadians(degree) {
+  return degree * (Math.PI / 180);
+}
+// نقطة النهاية لجلب العقارات المشابهة بناءً على الموقع
+app.post('/getSimilarProperties', async (req, res) => {
+  try {
+    const { latitude, longitude } = req.body;
+
+    if (!latitude || !longitude) {
+      return res.status(400).json({ error: 'Latitude and longitude are required' });
+    }
+
+    // جلب جميع العقارات من قاعدة البيانات
+    const allProperties = await Property.find({});
+
+    // تصفية العقارات التي تبعد أقل من أو تساوي 10 كيلومترات
+    const similarProperties = allProperties.filter((property) => {
+      const propertyLatitude = property.location.lat;
+      const propertyLongitude = property.location.lng;
+
+      // حساب المسافة بين العقار الحالي والعقار الآخر
+      const distance = calculateDistance(latitude, longitude, propertyLatitude, propertyLongitude);
+
+      // تحديد العقارات التي تبعد أقل من أو تساوي 10 كيلومترات
+      return distance <= 10; // 10 كيلومترات
+    });
+
+    // إرسال العقارات المشابهة كاستجابة
+    res.status(200).json({ properties: similarProperties });
+  } catch (error) {
+    console.error('Error fetching similar properties:', error);
+    res.status(500).json({ error: 'Failed to fetch similar properties' });
+  }
+});
+
 // تشغيل الخادم على المنفذ المحدد
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
